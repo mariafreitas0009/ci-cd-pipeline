@@ -1,4 +1,4 @@
-name: CI Pipeline - Basic
+name: CI - Python Tests
 
 on:
   push:
@@ -7,16 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do repositório
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Mostrar infos
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
         run: |
-          echo "Rodando CI no GitHub Actions ✅"
-          echo "Branch: $GITHUB_REF"
-          echo "Commit: $GITHUB_SHA"
-          ls -la
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Rodar testes (pytest)
+        run: |
+          pytest -q
+
